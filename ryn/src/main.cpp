@@ -84,7 +84,7 @@ std::string tokens_to_asm(const std::vector<Token>& tokens) {
             if (i + 1 < tokens.size() && tokens.at(i + 1).type == TokenType::_int_lit) {
                 if (i + 2 < tokens.size() && tokens.at(i + 2).type == TokenType::_semi) {
                     output << "    mov rax, 60\n";
-                    output << "    mov rbx, " << tokens.at(i + 1).value.value() << "\n";
+                    output << "    mov rdi, " << tokens.at(i + 1).value.value() << "\n";
                     output << "    syscall";
                 }
             }
@@ -111,9 +111,12 @@ int main(int argc, char* argv[]) {
 
     std::vector<Token> tokens = tokenize(contents);
     {
-        std::fstream file("../out.asm", std::ios::out);
+        std::fstream file("out.asm", std::ios::out);
         file << tokens_to_asm(tokens);
     }
+
+    system("nasm -felf64 out.asm");
+    system("ld -o out out.o");
 
     return EXIT_SUCCESS;
 }
