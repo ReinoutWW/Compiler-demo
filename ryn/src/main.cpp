@@ -76,7 +76,7 @@ std::vector<Token> tokenize(const std::string& str) {
 std::string tokens_to_asm(const std::vector<Token>& tokens) {
     std::stringstream output;
 
-    output << "global _start\nstart:\n";
+    output << "global _start\n_start:\n";
 
     for (int i = 0; i < tokens.size(); i++) {
         const Token& token = tokens[i];
