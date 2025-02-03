@@ -27,16 +27,19 @@ public:
     }
 
     std::optional<NodeExit> parse() {
+        std::optional<NodeExit> exit_node;
         while (peak().has_value()) {
             if (peak().value().type == TokenType::_exit) {
                 consume();
                 if (auto node_expr = parse_expr()) {
-                    std::optional<NodeExit> exit_node = NodeExit{.expr = node_expr.value()};
+                    exit_node = NodeExit {.expr = node_expr.value()};
                 } else {
                     std::cerr << "Invalid Expression" << std::endl;
                     exit(EXIT_FAILURE);
                 }
-                if (!peak().has_value() || peak().value().type != TokenType::_semi) {
+                if (peak().has_value() && peak().value().type == TokenType::_semi) {
+                    consume();
+                } else {
                     std::cerr << "Invalid Expression" << std::endl;
                     exit(EXIT_FAILURE);
                 }
@@ -44,11 +47,11 @@ public:
         }
 
         m_index = 0;
-        return NodeExit();
+        return exit_node;
     }
 
 private:
-    inline [[nodiscard]] std::optional<Token> peak(int ahead = 1) const {
+    [[nodiscard]] std::optional<Token> peak(int ahead = 1) const {
         if (m_index+ahead > m_tokens.size()) {
             return {};
         } else {
