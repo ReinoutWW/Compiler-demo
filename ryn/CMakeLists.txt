@@ -4,4 +4,6 @@ project(ryn)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(ryn src/main.cpp)
+add_executable(ryn src/main.cpp
+        src/tokenization.h
+)
