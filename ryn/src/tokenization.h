@@ -3,9 +3,14 @@
 #include <string>
 
 enum class TokenType {
-    _exit,
-    _int_lit,
-    _semi
+    exit,
+    int_lit,
+    semi,
+    open_paren,
+    close_paren,
+    ident,
+    let,
+    eq
 };
 
 struct Token {
@@ -30,11 +35,14 @@ public:
                 buffer.push_back(consume());
                 while (peek().has_value() && std::isalnum(peek().value())) {
                     buffer.push_back(consume());
-
-
                 }
                 if (buffer == "exit") {
-                    tokens.push_back({TokenType::_exit});
+                    tokens.push_back({TokenType::exit});
+                    buffer.clear();
+                    continue;
+                }
+                else if (buffer == "let") {
+                    tokens.push_back({TokenType::let});
                     buffer.clear();
                     continue;
                 }
@@ -49,12 +57,27 @@ public:
                     buffer.push_back(consume());
                     continue;
                 }
-                tokens.push_back(Token(TokenType::_int_lit, buffer));
+                tokens.push_back(Token(TokenType::int_lit, buffer));
                 buffer.clear();
+            }
+            else if (peek().value() == '(' ) {
+                consume();
+                tokens.push_back({TokenType::open_paren});
+                continue;
+            }
+            else if (peek().value() == ')') {
+                consume();
+                tokens.push_back({TokenType::close_paren});
+                continue;
             }
             else if (peek().value() == ';') {
                 consume();
-                tokens.push_back(Token(TokenType::_semi));
+                tokens.push_back(Token(TokenType::semi));
+                continue;
+            }
+            else if (peek().value() == '=') {
+                consume();
+                tokens.push_back(Token(TokenType::eq));
                 continue;
             }
             else if (std::isspace(peek().value())) {
@@ -62,8 +85,9 @@ public:
                 continue;
             }
             else {
-                std::cerr << "You messed up somewhere (best error you'll get)" << std::endl;
-                exit(EXIT_FAILURE);
+                tokens.push_back({TokenType::ident, buffer});
+                buffer.clear();
+                continue;
             }
         }
         m_index = 0;
@@ -71,11 +95,11 @@ public:
     }
 
 private:
-    [[nodiscard]] std::optional<char> peek(int ahead = 1) const {
-        if (m_index+ahead > m_src.length()) {
+    [[nodiscard]] std::optional<char> peek(int offset = 0) const {
+        if (m_index + offset >= m_src.length()) {
             return {};
         } else {
-            return m_src.at(m_index);
+            return m_src.at(m_index + offset);
         }
     }
 
