@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <strings.h>
 
 enum class TokenType {
     _exit,
@@ -26,10 +25,10 @@ public:
     inline std::vector<Token> tokenize() {
         std::string buffer;
         std::vector<Token> tokens;
-        while (peak().has_value()) {
-            if (std::isalpha(peak().value())) {
+        while (peek().has_value()) {
+            if (std::isalpha(peek().value())) {
                 buffer.push_back(consume());
-                while (peak().has_value() && std::isalnum(peak().value())) {
+                while (peek().has_value() && std::isalnum(peek().value())) {
                     buffer.push_back(consume());
 
 
@@ -44,21 +43,21 @@ public:
                     exit(EXIT_FAILURE);
                 }
             }
-            else if (std::isdigit(peak().value())) {
+            else if (std::isdigit(peek().value())) {
                 buffer.push_back(consume());
-                while (peak().has_value() && std::isdigit(peak().value())) {
+                while (peek().has_value() && std::isdigit(peek().value())) {
                     buffer.push_back(consume());
                     continue;
                 }
                 tokens.push_back(Token(TokenType::_int_lit, buffer));
                 buffer.clear();
             }
-            else if (peak().value() == ';') {
+            else if (peek().value() == ';') {
                 consume();
                 tokens.push_back(Token(TokenType::_semi));
                 continue;
             }
-            else if (std::isspace(peak().value())) {
+            else if (std::isspace(peek().value())) {
                 consume();
                 continue;
             }
@@ -72,7 +71,7 @@ public:
     }
 
 private:
-    [[nodiscard]] std::optional<char> peak(int ahead = 1) const {
+    [[nodiscard]] std::optional<char> peek(int ahead = 1) const {
         if (m_index+ahead > m_src.length()) {
             return {};
         } else {

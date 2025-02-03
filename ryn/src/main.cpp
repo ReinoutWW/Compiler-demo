@@ -35,10 +35,8 @@ int main(int argc, char* argv[]) {
     if (!tree.has_value()) {
         std::cerr << "No exit statement found" << std::endl;
         exit(EXIT_FAILURE);
-    }
-
-    Generator generator(tree.value());
-    {
+    } {
+        Generator generator(tree.value());
         std::fstream file("out.asm", std::ios::out);
         file << generator.generate();
     }
