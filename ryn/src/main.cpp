@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "./tokenization.h"
+#include "./parser.h"
 
 // https://www.youtube.com/watch?v=vcSijrRsrY0
 
