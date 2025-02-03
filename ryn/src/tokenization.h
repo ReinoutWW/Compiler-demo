@@ -43,17 +43,15 @@ public:
                     std::cerr << "You messed up somewhere (best error you'll get)" << std::endl;
                     exit(EXIT_FAILURE);
                 }
-
             }
             else if (std::isdigit(peak().value())) {
                 buffer.push_back(consume());
                 while (peak().has_value() && std::isdigit(peak().value())) {
                     buffer.push_back(consume());
-
-                    tokens.push_back(Token(TokenType::_int_lit, buffer));
-                    buffer.clear();
                     continue;
                 }
+                tokens.push_back(Token(TokenType::_int_lit, buffer));
+                buffer.clear();
             }
             else if (peak().value() == ';') {
                 consume();
@@ -74,7 +72,7 @@ public:
     }
 
 private:
-    inline [[nodiscard]] std::optional<char> peak(int ahead = 1) const {
+    [[nodiscard]] std::optional<char> peak(int ahead = 1) const {
         if (m_index+ahead > m_src.length()) {
             return {};
         } else {
