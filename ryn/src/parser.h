@@ -12,8 +12,24 @@ struct NodeExprIdent {
     Token ident;
 };
 
+struct NodeExpr;
+
+struct BinExprAdd {
+    NodeExpr* lhs;
+    NodeExpr* rhs;
+};
+
+struct BinExprMulti {
+    NodeExpr* lhs;
+    NodeExpr* rhs;
+};
+
+struct BinExpr {
+    std::variant<BinExprAdd*, BinExprMulti*> var;
+};
+
 struct NodeExpr {
-    std::variant<NodeExprIntLit, NodeExprIdent> var;
+    std::variant<NodeExprIntLit*, NodeExprIdent*, BinExpr*> var;
 };
 
 struct NodeStmtExit {
