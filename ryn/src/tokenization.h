@@ -47,8 +47,9 @@ public:
                     continue;
                 }
                 else {
-                    std::cerr << "You messed up somewhere (best error you'll get)" << std::endl;
-                    exit(EXIT_FAILURE);
+                    tokens.push_back({ .type = TokenType::ident, .value = buffer });
+                    buffer.clear();
+                    continue;
                 }
             }
             else if (std::isdigit(peek().value())) {
