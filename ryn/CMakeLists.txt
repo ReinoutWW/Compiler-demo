@@ -8,4 +8,5 @@ add_executable(ryn src/main.cpp
         src/tokenization.h
         src/parser.h
         src/generation.h
+        src/arena.h
 )
