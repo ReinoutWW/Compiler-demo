@@ -194,8 +194,8 @@ private:
         return m_tokens.at(m_index++);
     }
 
-    inline Token try_consume(TokenType token, const std::string& err_msg) {
-        if (peek().has_value() && peek().value().type == TokenType::semi) {
+    inline Token try_consume(const TokenType type, const std::string& err_msg) {
+        if (peek().has_value() && peek().value().type == type) {
             return consume();
         }
         else {
@@ -204,8 +204,8 @@ private:
         }
     }
 
-    inline std::optional<Token> try_consume(TokenType token) {
-        if (peek().has_value() && peek().value().type == TokenType::semi) {
+    inline std::optional<Token> try_consume(const TokenType type) {
+        if (peek().has_value() && peek().value().type == type) {
             return consume();
         }
         else {
