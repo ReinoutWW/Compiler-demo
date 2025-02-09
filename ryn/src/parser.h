@@ -61,8 +61,14 @@ struct NodeStmtLet {
     NodeExpr* expr;
 };
 
+struct NodeStmt;
+
+struct NodeStmtScope {
+    std::vector<NodeStmt*> stmts;
+};
+
 struct NodeStmt {
-    std::variant<NodeStmtExit*, NodeStmtLet*>     var;
+    std::variant<NodeStmtExit*, NodeStmtLet*, NodeStmtScope*>     var;
 };
 
 struct NodeProg {
@@ -154,7 +160,7 @@ public:
                 add->lhs = expr_lhs2;
                 add->rhs = expr_rhs.value();
                 expr->var = add;
-            } else if (op.type == TokenType::sub) {
+            } else if (op.type == TokenType::minus) {
                 auto sub = m_allocator.alloc<NodeBinExprSub>();
                 expr_lhs2->var = expr_lhs->var;
                 sub->lhs = expr_lhs2;
@@ -166,7 +172,7 @@ public:
                 multi->lhs = expr_lhs2;
                 multi->rhs = expr_rhs.value();
                 expr->var = multi;
-            } else if (op.type == TokenType::div) {
+            } else if (op.type == TokenType::fslash) {
                 auto div = m_allocator.alloc<NodeBinExprDiv>();
                 expr_lhs2->var = expr_lhs->var;
                 div->lhs = expr_lhs2;
@@ -219,6 +225,16 @@ public:
             try_consume(TokenType::semi, "Expected ';'");
             auto stmt = m_allocator.alloc<NodeStmt>();
             stmt->var = stmt_let;
+            return stmt;
+        }
+        else if (auto open_curly = try_consume(TokenType::open_curly)) {
+            auto scope = m_allocator.alloc<NodeStmtScope>();
+            while (auto stmt = parse_stmt()) {
+                scope->stmts.push_back(stmt.value());
+            }
+            try_consume(TokenType::close_curly, "Expected '}'");
+            auto stmt = m_allocator.alloc<NodeStmt>();
+            stmt->var = scope;
             return stmt;
         }
         else {
