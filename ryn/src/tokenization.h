@@ -17,6 +17,7 @@ enum class TokenType {
     fslash,
     open_curly,
     close_curly,
+    if_
 };
 
 std::optional<int> bin_prec(TokenType type) {
@@ -61,6 +62,10 @@ public:
                 }
                 else if (buffer == "let") {
                     tokens.push_back({TokenType::let});
+                    buffer.clear();
+                }
+                else if (buffer == "if") {
+                    tokens.push_back({TokenType::if_});
                     buffer.clear();
                 }
                 else {
